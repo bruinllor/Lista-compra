@@ -124,7 +124,13 @@ function añadir() {
         nombre: nombre,
         comprado: false
     });
-
+supabase
+    .from("productos")
+    .insert({
+        nombre: nombre,
+        comprado: false,
+        usuario: "principal"
+    });
     input.value = "";
 
     guardar();
