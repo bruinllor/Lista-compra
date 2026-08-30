@@ -89,7 +89,12 @@
 
 const SUPABASE_URL = "https://neydfkskvcqyaaegmjpg.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_VpIQv26CiA9t9Jei12AlSQ_fMWg8Xlx";
+let nombreUsuario = localStorage.getItem("nombreUsuario");
 
+if (!nombreUsuario) {
+    nombreUsuario = prompt("¿Cómo te llamas?");
+    localStorage.setItem("nombreUsuario", nombreUsuario);
+}
 const clienteSupabase = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
@@ -130,9 +135,10 @@ function mostrar() {
 
         li.innerHTML = `
             <span onclick="comprar(${indice})"
-                  class="${producto.comprado ? 'comprado' : ''}">
-                ${producto.nombre}
-            </span>
+      class="${producto.comprado ? 'comprado' : ''}">
+    ${producto.nombre}
+    <small> — añadido por ${producto.usuario}</small>
+</span>
 
             <button onclick="eliminar(${indice})">🗑️</button>
         `;
@@ -155,7 +161,7 @@ async function añadir() {
         .insert({
             nombre: nombre,
             comprado: false,
-            usuario: "principal"
+            usuario: nombreUsuario
         })
         .select();
 
