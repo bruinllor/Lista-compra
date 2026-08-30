@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -64,7 +65,9 @@
             opacity: 0.5;
         }
     </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Librería de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -83,14 +86,39 @@
 </div>
 
 <script>
-const SUPABASE_URL = "TU_URL";
-const SUPABASE_ANON_KEY = "TU_CLAVE";
-let productos = JSON.parse(localStorage.getItem("listaCompra")) || [];
 
-function guardar() {
-    localStorage.setItem("listaCompra", JSON.stringify(productos));
+const SUPABASE_URL = "https://neydfkskvcqyaaegmjpg.supabase.co/rest/v1/";
+const SUPABASE_ANON_KEY = "sb_publishable_VpIQv26CiA9t9Jei12AlSQ_fMWg8Xlx";
+
+const clienteSupabase = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+
+// Cargar productos desde Supabase
+async function cargarProductos() {
+
+    const { data, error } = await clienteSupabase
+        .from("productos")
+        .select("*")
+        .order("id", { ascending: true });
+
+    if (error) {
+        console.error("Error al cargar productos:", error);
+        return;
+    }
+
+    productos = data;
+    mostrar();
 }
 
+
+// Variable donde guardamos los productos
+let productos = [];
+
+
+// Mostrar productos
 function mostrar() {
 
     const lista = document.getElementById("lista");
@@ -113,49 +141,81 @@ function mostrar() {
     });
 }
 
-function añadir() {
+
+// Añadir producto
+async function añadir() {
 
     const input = document.getElementById("producto");
     const nombre = input.value.trim();
 
     if (nombre === "") return;
 
-    productos.push({
-        nombre: nombre,
-        comprado: false
-    });
-supabase
-    .from("productos")
-    .insert({
-        nombre: nombre,
-        comprado: false,
-        usuario: "principal"
-    });
+    const { data, error } = await clienteSupabase
+        .from("productos")
+        .insert({
+            nombre: nombre,
+            comprado: false,
+            usuario: "principal"
+        })
+        .select();
+
+    if (error) {
+        console.error("Error al añadir producto:", error);
+        alert("No se pudo añadir el producto.");
+        return;
+    }
+
     input.value = "";
 
-    guardar();
-    mostrar();
+    cargarProductos();
 }
 
-function comprar(indice) {
 
-    productos[indice].comprado =
-        !productos[indice].comprado;
+// Marcar como comprado
+async function comprar(indice) {
 
-    guardar();
-    mostrar();
+    const producto = productos[indice];
+
+    const { error } = await clienteSupabase
+        .from("productos")
+        .update({
+            comprado: !producto.comprado
+        })
+        .eq("id", producto.id);
+
+    if (error) {
+        console.error("Error al actualizar producto:", error);
+        return;
+    }
+
+    cargarProductos();
 }
 
-function eliminar(indice) {
 
-    productos.splice(indice, 1);
+// Eliminar producto
+async function eliminar(indice) {
 
-    guardar();
-    mostrar();
+    const producto = productos[indice];
+
+    const { error } = await clienteSupabase
+        .from("productos")
+        .delete()
+        .eq("id", producto.id);
+
+    if (error) {
+        console.error("Error al eliminar producto:", error);
+        return;
+    }
+
+    cargarProductos();
 }
 
-mostrar();
+
+// Cargar la lista al abrir la página
+cargarProductos();
+
 </script>
 
 </body>
 </html>
+```
