@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,7 +9,8 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            background: #000;
+            color: white;
             margin: 0;
             padding: 20px;
         }
@@ -17,13 +18,14 @@
         .contenedor {
             max-width: 500px;
             margin: auto;
-            background: white;
+            background: #1c1c1c;
             padding: 25px;
             border-radius: 20px;
         }
 
         h1 {
             text-align: center;
+            color: white;
         }
 
         .entrada {
@@ -34,8 +36,19 @@
         input {
             flex: 1;
             padding: 12px;
-            border: 1px solid #ccc;
+            border: 1px solid #444;
             border-radius: 10px;
+            background: #2a2a2a;
+            color: white;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        input:focus {
+            border-color: #666;
         }
 
         button {
@@ -43,6 +56,12 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
+            background: #333;
+            color: white;
+        }
+
+        button:hover {
+            background: #444;
         }
 
         ul {
@@ -56,8 +75,17 @@
             justify-content: space-between;
             padding: 12px;
             margin-top: 8px;
-            background: #f1f1f1;
+            background: #2a2a2a;
             border-radius: 10px;
+            color: white;
+        }
+
+        li span {
+            cursor: pointer;
+        }
+
+        li small {
+            color: #999;
         }
 
         .comprado {
@@ -95,6 +123,7 @@ if (!nombreUsuario) {
     nombreUsuario = prompt("¿Cómo te llamas?");
     localStorage.setItem("nombreUsuario", nombreUsuario);
 }
+
 const clienteSupabase = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
@@ -135,10 +164,10 @@ function mostrar() {
 
         li.innerHTML = `
             <span onclick="comprar(${indice})"
-      class="${producto.comprado ? 'comprado' : ''}">
-    ${producto.nombre}
-    <small> — añadido por ${producto.usuario}</small>
-</span>
+                class="${producto.comprado ? 'comprado' : ''}">
+                ${producto.nombre}
+                <small> — añadido por ${producto.usuario}</small>
+            </span>
 
             <button onclick="eliminar(${indice})">🗑️</button>
         `;
@@ -224,4 +253,4 @@ cargarProductos();
 
 </body>
 </html>
-
+```
